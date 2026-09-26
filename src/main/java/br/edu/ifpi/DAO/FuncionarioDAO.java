@@ -6,22 +6,25 @@ import br.edu.ifpi.JPAUtil;
 
 public class FuncionarioDAO {
 
-    public void salvar(Funcionario funcionario) {
+    public boolean salvar(Funcionario funcionario) {
+        if (existePorCpf(funcionario.getCpf())) return false;
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
             em.persist(funcionario);
             transaction.commit();
+            return true;
         } catch (Exception e) {
             if (transaction.isActive()) { transaction.rollback(); }
             e.printStackTrace();
+            return false;
         } finally { em.close(); }
     }
 
-    public Funcionario buscarPorId(Long id) {
+    public boolean existePorCpf(String cpf) {
         EntityManager em = JPAUtil.getEntityManager();
-        try { return em.find(Funcionario.class, id); }
+        try { return em.find(Funcionario.class, cpf) != null; }
         finally { em.close(); }
     }
 

@@ -1,0 +1,14 @@
+# Arquivos gerados por build
+target/
+*.class
+*.jar
+
+# Variáveis de ambiente (NÃO commitar)
+.env
+
+# Configuração local do banco de dados
+*.recovery
+
+# IDE specific
+.idea/
+*.iml

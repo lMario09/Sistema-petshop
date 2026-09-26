@@ -6,12 +6,28 @@ import br.edu.ifpi.JPAUtil;
 
 public class ClienteDAO {
 
-    public void salvar(Cliente cliente) {
+    public boolean salvar(Cliente cliente) {
+        if (existePorCpf(cliente.getCpf())) return false;
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
             em.persist(cliente);
+            transaction.commit();
+            return true;
+        } catch (Exception e) {
+            if (transaction.isActive()) { transaction.rollback(); }
+            e.printStackTrace();
+            return false;
+        } finally { em.close(); }
+    }
+
+    public void atualizar(Cliente cliente) {
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            em.merge(cliente);
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) { transaction.rollback(); }
@@ -19,11 +35,21 @@ public class ClienteDAO {
         } finally { em.close(); }
     }
 
-    public Cliente buscarPorId(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try { return em.find(Cliente.class, id); }
-        finally { em.close(); }
+    public boolean existePorCpf(String cpf) {
+    EntityManager em = JPAUtil.getEntityManager();
+
+    try {
+        String jpql = "SELECT COUNT(c) FROM Cliente c WHERE c.cpf = :cpf";
+
+        Long quantidade = em.createQuery(jpql, Long.class)
+                .setParameter("cpf", cpf)
+                .getSingleResult();
+
+        return quantidade > 0;
+    } finally {
+        em.close();
     }
+}
 
     public Cliente buscarPorCpf(String cpf) {
         EntityManager em = JPAUtil.getEntityManager();

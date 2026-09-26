@@ -3,7 +3,9 @@ package br.edu.ifpi.Principal;
 import br.edu.ifpi.DAO.ClienteDAO;
 import br.edu.ifpi.DAO.FuncionarioDAO;
 import br.edu.ifpi.Model.Cliente;
+import br.edu.ifpi.Model.Endereco;
 import br.edu.ifpi.Model.Funcionario;
+import java.lang.reflect.Method;
 import java.util.Scanner;
 
 public class Main {
@@ -54,6 +56,14 @@ public class Main {
         scanner.close();
     }
 
+    static void setCampoEndereco(Object endereco, String metodo, Object valor) {
+        try {
+            Method method = endereco.getClass().getMethod(metodo, valor.getClass());
+            method.invoke(endereco, valor);
+        } catch (Exception ignored) {
+        }
+    }
+
     static void cadastrarCliente(Scanner scanner) {
         Cliente c = new Cliente();
         System.out.print("Nome: ");
@@ -64,10 +74,26 @@ public class Main {
         c.setTelefone(scanner.nextLine());
         System.out.print("Senha: ");
         c.setSenha(scanner.nextLine());
-        System.out.print("Endereco: ");
-        c.setEndereco(scanner.nextLine());
-        clienteDAO.salvar(c);
-        System.out.println("Cliente salvo com sucesso!");
+        Endereco endereco = new Endereco();
+        System.out.println("=== Endereco ===");
+        System.out.print("Logradouro: ");
+        endereco.setLogradouro(scanner.nextLine());
+        System.out.print("Numero: ");
+        endereco.setNumero(scanner.nextLine());
+        System.out.print("Complemento: ");
+        endereco.setComplemento(scanner.nextLine());
+        System.out.print("Bairro: ");
+        endereco.setBairro(scanner.nextLine());
+        System.out.print("Cidade: ");
+        endereco.setCidade(scanner.nextLine());
+        c.setEndereco(endereco);
+        System.out.println("Endereco criado: " + endereco);
+        System.out.println("Endereco no cliente: " + c.getEndereco());
+        if (clienteDAO.salvar(c)) {
+            System.out.println("Cliente salvo com sucesso!");
+        } else {
+            System.out.println("Não foi possível cadastrar o cliente.");
+        }
     }
 
     static void cadastrarFuncionario(Scanner scanner) {
@@ -83,8 +109,11 @@ public class Main {
         System.out.print("Salario: ");
         f.setSalario(scanner.nextDouble());
         scanner.nextLine();
-        funcionarioDAO.salvar(f);
-        System.out.println("Funcionario salvo com sucesso!");
+        if (funcionarioDAO.salvar(f)) {
+            System.out.println("Funcionario salvo com sucesso!");
+        } else {
+            System.out.println("CPF " + f.getCpf() + " ja esta em uso. Nao foi possivel cadastrar.");
+        }
     }
 
     static void pesquisarCliente(Scanner scanner) {

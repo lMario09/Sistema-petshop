@@ -91,7 +91,7 @@ public class MainCliente {
         animal.setRaca(scanner.nextLine());
 
         cliente.adicionarAnimal(animal);
-        clienteDAO.salvar(cliente);
+        clienteDAO.atualizar(cliente);
         System.out.println("Animal cadastrado com sucesso!");
     }
 
