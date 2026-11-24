@@ -6,7 +6,7 @@ import jakarta.persistence.Persistence;
 
 public class JPAUtil {
 
-    private static final EntityManagerFactory FACTORY = Persistence.createEntityManagerFactory("petshop-banco");
+    private static final EntityManagerFactory FACTORY = Persistence.createEntityManagerFactory("petshop_banco");
 
     public static EntityManager getEntityManager() {
         return FACTORY.createEntityManager();
